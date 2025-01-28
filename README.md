@@ -1,72 +1,100 @@
-## demo app - developing with Docker
+# Demo Projects: Containers with Docker
 
-This demo app shows a simple user profile app set up using 
-- index.html with pure js and css styles
-- nodejs backend with express module
-- mongodb for data storage
+## Project 1: Use Docker for Local Development
 
-All components are docker-based
+### Technologies Used
+- **Docker**
+- **Node.js**
+- **MongoDB**
+- **MongoExpress**
 
-### With Docker
+### Project Description
+- Created a **Dockerfile** for a Node.js application and built a Docker image.
+- Ran the Node.js application in a Docker container and connected it to a MongoDB database container locally.
+- Deployed **MongoExpress** as a container to serve as the UI for the MongoDB database.
 
-#### To start the application
+---
 
-Step 1: Create docker network
+## Project 2: Docker Compose - Run Multiple Docker Containers
 
-    docker network create mongo-network 
+### Technologies Used
+- **Docker**
+- **MongoDB**
+- **MongoExpress**
 
-Step 2: start mongodb 
+### Project Description
+- Wrote a **Docker Compose** file to manage and run multiple Docker containers for:
+  - **MongoDB**: Database service.
+  - **MongoExpress**: UI for MongoDB database management.
 
-    docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password --name mongodb --net mongo-network mongo    
+---
 
-Step 3: start mongo-express
-    
-    docker run -d -p 8081:8081 -e ME_CONFIG_MONGODB_ADMINUSERNAME=admin -e ME_CONFIG_MONGODB_ADMINPASSWORD=password --net mongo-network --name mongo-express -e ME_CONFIG_MONGODB_SERVER=mongodb mongo-express   
+## Project 3: Deploy Docker Application on a Server with Docker Compose
 
-_NOTE: creating docker-network in optional. You can start both containers in a default network. In this case, just emit `--net` flag in `docker run` command_
+### Technologies Used
+- **Docker**
+- **Amazon ECR**
+- **Node.js**
+- **MongoDB**
+- **MongoExpress**
 
-Step 4: open mongo-express from browser
+### Project Description
+- Copied the **Docker Compose** file to a remote server.
+- Logged in to a private Docker registry on the remote server to fetch the application image.
+- Deployed and started the application container along with **MongoDB** and **MongoExpress** services using Docker Compose.
 
-    http://localhost:8081
+---
 
-Step 5: create `user-account` _db_ and `users` _collection_ in mongo-express
+## Project 4: Dockerize Node.js Application and Push to Private Docker Registry
 
-Step 6: Start your nodejs application locally - go to `app` directory of project 
+### Technologies Used
+- **Docker**
+- **Node.js**
+- **Amazon ECR**
 
-    cd app
-    npm install 
-    node server.js
-    
-Step 7: Access you nodejs application UI from browser
+### Project Description
+- Wrote a **Dockerfile** to build a Docker image for a Node.js application.
+- Created a private Docker registry on **AWS (Amazon ECR)**.
+- Pushed the Docker image to this private repository for secure storage and deployment.
 
-    http://localhost:3000
+---
 
-### With Docker Compose
+## Project 5: Create Docker Repository on Nexus and Push to It
 
-#### To start the application
+### Technologies Used
+- **Docker**
+- **Nexus**
+- **DigitalOcean**
+- **Linux**
 
-Step 1: start mongodb and mongo-express
+### Project Description
+- Created a Docker-hosted repository on **Nexus**.
+- Configured **Nexus**, a DigitalOcean Droplet, and Docker to push images to the Nexus repository.
+- Built and pushed a Docker image to the Docker repository hosted on Nexus.
 
-    docker-compose -f docker-compose.yaml up
-    
-_You can access the mongo-express under localhost:8080 from your browser_
-    
-Step 2: in mongo-express UI - create a new database "user-account"
+---
 
-Step 3: in mongo-express UI - create a new collection "users" in the database "user-account"       
-    
-Step 4: start node server 
+## Project 6: Persist Data with Docker Volumes
 
-    cd app
-    npm install
-    node server.js
-    
-Step 5: access the nodejs application from browser 
+### Technologies Used
+- **Docker**
+- **Node.js**
+- **MongoDB**
 
-    http://localhost:3000
+### Project Description
+- Configured a **Docker Volume** to persist data for a MongoDB container.
+- Ensured data durability and availability across container restarts.
 
-#### To build a docker image from the application
+---
 
-    docker build -t my-app:1.0 .       
-    
-The dot "." at the end of the command denotes location of the Dockerfile.
+## Project 7: Deploy Nexus as Docker Container
+
+### Technologies Used
+- **Docker**
+- **Nexus**
+- **DigitalOcean**
+- **Linux**
+
+### Project Description
+- Created and configured a Droplet on **DigitalOcean**.
+- Set up and deployed **Nexus** as a Docker container for repository management.

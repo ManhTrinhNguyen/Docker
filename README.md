@@ -119,18 +119,27 @@
 **Best Practice 3**
 
 ```
-  - Choose a Alphine Image base Distribute System
-
   - Use smaller Image for Less Storage, Transfer faster
 
+  - Choose Smaller Image with Leaner OS Distribution with only bundle nessesary utilities 
 
   ----Issue with full-blown Images----
 
-  - Security Issue . Easier to attack Bcs contain of 100 
+  - Security Issue . Easier to attack
+
+  - Larger size will transfer slower
+
+  - So the Best practice choose a Image with specific Version based on a leaner OS Distribution like Alpine 
 ```
 
+**Best Practice 4**
 
+```
+  - Optimizing Caching Image Layer when building a Images
 
+  - The best practice is I should Order the Command from the Least to the Most Frequently changed to take advange o Cached
+
+```
 
 
 

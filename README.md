@@ -98,3 +98,50 @@
 ### Project Description
 - Created and configured a Droplet on **DigitalOcean**.
 - Set up and deployed **Nexus** as a Docker container for repository management.
+
+
+
+
+## Docker Best Practice 
+
+**Best Practice 1**
+
+```
+  - Use Official Base Image as Base Image 
+```
+
+**Best Practice 2**
+
+```
+  - User Specific Version 
+```
+
+**Best Practice 3**
+
+```
+  - Choose a Alphine Image base Distribute System
+
+  - Use smaller Image for Less Storage, Transfer faster
+
+
+  ----Issue with full-blown Images----
+
+  - Security Issue . Easier to attack Bcs contain of 100 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

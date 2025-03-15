@@ -179,7 +179,7 @@
 
   - I use multi Stage build . The multile Stage build allow me to use multiple temporary Images during the build process but keep only the latest image as the final artifact  
 
-<img width="600" alt="Screenshot 2025-03-14 at 21 11 07" src="https://github.com/user-attachments/assets/cfed3aa4-dd09-44c9-9bfb-e6c18599b59a" />
+<img width="600" alt="Screenshot 2025-03-14 at 21 49 21" src="https://github.com/user-attachments/assets/af13ff3c-c945-414a-8499-d1f93196c399" />
 
   - In the example above : I have a Build Stage above and the Run Stage bellow . The Build Stage use to build a Maven Package artifact . And the Run Stage Copy Maven Aftifact from the Build Stage and run it . So in the final Image the Build Stage will get removed . Now the Image layer only have 2 in the Run Stage .
 

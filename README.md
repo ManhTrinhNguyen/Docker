@@ -201,7 +201,15 @@
 
   - Then I run the App : `CMD node index.js`
 
+**Best Practice 8**
 
+  - How do I know that the Image has built has few or no security vulnerable ?
+
+  - Using `docker scout cves myapp:1.0` command to scan my Image for Security vulverability
+
+  !!! Note : I have to login to Docker Hub in able to scan Images
+
+  - In the background Docker will scan against its own Database of known vulnerabilities to run vulnerabilities scan on the Image . The Database of known vulnerabilities gets constantly updated, so new one get discover and edit all the time for different Images 
 
 
 

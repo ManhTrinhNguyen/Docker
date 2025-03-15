@@ -183,8 +183,23 @@
 
   - In the example above : I have a Build Stage above and the Run Stage bellow . The Build Stage use to build a Maven Package artifact . And the Run Stage Copy Maven Aftifact from the Build Stage and run it . So in the final Image the Build Stage will get removed . Now the Image layer only have 2 in the Run Stage .
 
+**Best Practice 7**
 
+  - Now when we create this Image and run it as a Container Which OS user will be use to start the Application inside ?
+  
+  - By default Dockerfile does not specify a user it uses a Root User . But in reality never should run Application as Root User
 
+  - The Solution is to create dedicate User with a dedicated Group in Docker Image to run Application 
+
+  <img width="600" alt="Screenshot 2025-03-14 at 21 58 48" src="https://github.com/user-attachments/assets/214d310a-eed4-4864-98b3-4b1d04b3f51d" />
+
+  - To create user and group in Image : `RUN groupadd -r tom && useradd -g tom tom`.
+
+  - Then I set ownership and permission to that user : `RUN chown -R tom:tom /app`
+
+  - Then I switch to that User : `USER tom`
+
+  - Then I run the App : `CMD node index.js`
 
 
 

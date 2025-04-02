@@ -47,34 +47,46 @@
 
 ---
 
-## Project 3: Deploy Docker Application on a Server with Docker Compose
+## Docker vs Virtual Machine 
 
-### Technologies Used
-- **Docker**
-- **Amazon ECR**
-- **Node.js**
-- **MongoDB**
-- **MongoExpress**
+#### How is OS made up ? 
 
-### Project Description
-- Copied the **Docker Compose** file to a remote server.
-- Logged in to a private Docker registry on the remote server to fetch the application image.
-- Deployed and started the application container along with **MongoDB** and **MongoExpress** services using Docker Compose.
+- OS have 2 layers : OS Kernal and OS Applications Layer
 
+  - OS Kernal is at the core of every OS . Is a part that communication with hardware components like CPU and Memory ...
+ 
+  - OS Application run on the Kernal Layer so they based on the Kernal layer . For example  Linux OS and there is a lots of distribution of Linux out there , Ubuntu and Debian and there is Linuxmint etc.. GUI look different, the file system is maybe different, so a lot of application that I use are different . Bcs even though they use the same Linux Kernal they use different Application on top of Kernal
+ 
+- Docker and Virtual machine they're both virtualization tools . Question is What parts of the OS they virtualize .
+
+  <img width="568" alt="Screenshot 2025-04-01 at 22 08 31" src="https://github.com/user-attachments/assets/6e2ecea1-3bfa-4c9b-b3bf-9b2ee12e186d" />
+
+  - Docker virtualize the OS Application Layer .
+ 
+    - When I download the Docker Image, it actually contains the application layer of the OS and some other Applications installed on top of it and it uses the kernel of the host bsc it doesn't have it's own kernal
+   
+  - The Virtual Machine has the Application layers and its own Kernel so it virtualizes the complete operating system, which mean that when I download the virtual machine image on my host it doesn't use my host Kernal it boost up its own
+ 
+  <img width="240" alt="Screenshot 2025-04-01 at 22 09 04" src="https://github.com/user-attachments/assets/63563197-30e1-4a5c-994c-f6d2a760e523" />
+
+#### What affects has this difference ? 
+
+- Size :The size of Docker Images much smaller, bcs they just have to implement one layer. So Docker Images are usally a coupel of megabytes.  Virtual Machine can be couple of Gigabyets
+
+- Speed : I can start and run Docker container much faster than VM bcs everytime I start them I have to boost the OS Kernel
+
+- Compatibility : I can run Virtual Machine image of any OS on any other OS host . but I can't do that with Docker
+
+  - What is a problem ? Let say I have Window OS with Window Kernel and its application layers and I want to run a Linux base Docker Image directly on the Window host . The problem here is Linux based Docker Images can not use Window Kernel It would need a Linux Kernel to run .
+ 
+  - However when I am developing on Windows or MacOS . I want to run various services, bcs most container for the Popular services are Linux based . Also Docker originally written and built for Linux OS but later Docker made an update call Docker Desktop for Window and Mac which made it possible to run Linux based .
+ 
+  - So the way it work is Docker Desktop uses hypervisor layer with lightweight Linux distribution on top of to provide the needed Linux Kernel and this way make running Linux-based container possible on Window and Mac  OS . 
 ---
 
-## Project 4: Dockerize Node.js Application and Push to Private Docker Registry
+## Docker Architecture and its components 
 
-### Technologies Used
-- **Docker**
-- **Node.js**
-- **Amazon ECR**
-
-### Project Description
-- Wrote a **Dockerfile** to build a Docker image for a Node.js application.
-- Created a private Docker registry on **AWS (Amazon ECR)**.
-- Pushed the Docker image to this private repository for secure storage and deployment.
-
+- 
 ---
 
 ## Project 5: Create Docker Repository on Nexus and Push to It

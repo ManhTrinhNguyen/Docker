@@ -86,7 +86,27 @@
 
 ## Docker Architecture and its components 
 
-- 
+<img width="600" alt="Screenshot 2025-04-01 at 22 29 04" src="https://github.com/user-attachments/assets/8a48a299-36fd-467a-b6cd-8501d3529713" />
+
+- When I install Docker I acutally install the Docker Engine which comes with 3 parts .
+
+  - Docker Server : Responsible for pulling Images, Storing the, starting containers, stopping containers and so on
+ 
+  - Docker API : API for interacting with Docker Server
+ 
+  - CLI : which is a very powerful client to execute docker command aginst the server . To tell docker server to pull image, run and stop containers
+ 
+#### Docker Server 
+
+<img width="600" alt="Screenshot 2025-04-01 at 22 31 23" src="https://github.com/user-attachments/assets/038a4a6e-6294-43ef-8d4d-aa46abef9aca" />
+
+- Container runtime : Reposible for pulling images , start container stop container
+
+- Volumes : Reposible for persisting data and container
+
+- Nerwork : Configuring network for container communication
+
+- Build Images : Build own Docker Images  
 ---
 
 ## Project 5: Create Docker Repository on Nexus and Push to It

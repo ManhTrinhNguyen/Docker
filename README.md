@@ -31,17 +31,19 @@
     - No Environemnt configuration needed on Server - Except Docker Runtime
 ---
 
-## Project 2: Docker Compose - Run Multiple Docker Containers
+## Container vs Image 
 
-### Technologies Used
-- **Docker**
-- **MongoDB**
-- **MongoExpress**
+- Container is made up of Images . We have layers of stacked Images on top of each other and the base of most of the contaier I would have Linux based Image
 
-### Project Description
-- Wrote a **Docker Compose** file to manage and run multiple Docker containers for:
-  - **MongoDB**: Database service.
-  - **MongoExpress**: UI for MongoDB database management.
+- Advantage of splitting those applications in layers is that . For example that Image change or I have to download a newer version of Postgres . What happens is that the layers that are the same between those 2 application , 2 version of Postgres will not be downloaded again but only those the Layers different
+
+- To run a Images : `docker run ...`
+
+#### 2 Technical term of Image and Container 
+
+- Images is the actual application package together with the configuration and the dependencies . This is actually the artifact movable around
+
+- Container is when I pull the Image to my local machine and I actually start it, so the application inside acutally starts that create the container Evironment . It's not running is a Image, If I start it and run it on my machine it is a Container 
 
 ---
 

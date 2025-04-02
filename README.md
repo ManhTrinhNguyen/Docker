@@ -1,18 +1,34 @@
 # Demo Projects: Containers with Docker
 
-## Project 1: Use Docker for Local Development
+## Container 
 
-### Technologies Used
-- **Docker**
-- **Node.js**
-- **MongoDB**
-- **MongoExpress**
+#### What is container ? 
 
-### Project Description
-- Created a **Dockerfile** for a Node.js application and built a Docker image.
-- Ran the Node.js application in a Docker container and connected it to a MongoDB database container locally.
-- Deployed **MongoExpress** as a container to serve as the UI for the MongoDB database.
+- Container is a way to package application with all the necessary dependencies and configuration
 
+- And that Package is protable . Easy to share and move around the team
+
+- And that portable of containers plus everything package in one isolated environment that make development and deployment process more efficent
+
+#### Where container live ? 
+
+- Container live in container Repository . This is a special type of Repo to store Container
+
+#### How container improve development process ? 
+
+- Before the container : Usally I have a team of developers working on some application I would have to install most of the services on my OS directly . For example I develop Javascript Apps and I need PostgreQL and I need Redis for messaging and every developer in the team go and install the binaries of those services configure them and run them on their local development evironment . Depend on the OS they are using the installation will look different . Also I have multiple step where something could go wrong . This approach can be pretty tedious depending on how complex my application is .
+
+- Before the container Process : Development team will produce the artifacts together with a set of instruction of how to install and configure those artifact on the server . In addition I would have some kind of DB . So the Dev team will give the Artifacts over to the Operations Team and the Operations Team will handle setting up the enviornment to deploy Application  
+
+- After container : With Container I don't have to intall any of the Services directly on my OS . Bcs the Container is it own isolated environment layer with Linux based image, I have everything packaged in one isolated environment . And the download step is just 1 docker command , which fetches the container and start at the same time. Regraless any OS that I use the docker command will be the same
+
+- Also I can have differnet versions of the same application running on my local environment without having any conflict .
+
+- After container Process:
+  
+    - Developer and Operations work together to package the application in a container .
+ 
+    - No Environemnt configuration needed on Server - Except Docker Runtime
 ---
 
 ## Project 2: Docker Compose - Run Multiple Docker Containers

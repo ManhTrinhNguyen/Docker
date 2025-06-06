@@ -1,4 +1,12 @@
-# Demo Projects: Containers with Docker
+- [Container](#Container)
+
+- [Container vs Image](#Container-vs-Image)
+
+- [Docker vs Virtual Machine](#Docker-vs-Virtual-Machine)
+
+- [Docker Architecture and its components](#Docker-Architecture-and-its-components)
+
+- [Docker Project](#Docker-Project)
 
 ## Container 
 
@@ -107,7 +115,40 @@
 - Nerwork : Configuring network for container communication
 
 - Build Images : Build own Docker Images  
----
+
+
+## Docker Project 
+
+<img width="600" alt="Screenshot 2025-06-06 at 12 37 25" src="https://github.com/user-attachments/assets/50d39c6a-3ee5-4582-9940-69d015b582b2" />
+
+#### Project Overview 
+
+Use Docker for local development
+
+Technologies used:
+
+- Docker, Node.js, MongoDB, MongoExpress
+
+Project Description:
+
+- Create Dockerfile for Nodejs application and build Docker image
+
+- Run Nodejs application in Docker container and connect to
+  
+- MongoDB database container locally. Also run MongoExpress container as a UI of the MongoDB
+database.
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Project 5: Create Docker Repository on Nexus and Push to It
 

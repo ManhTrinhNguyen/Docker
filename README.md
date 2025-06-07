@@ -11,6 +11,8 @@
   - [Docker in Software Development](#Docker-in-Software-Development)
  
   - [Docker Network](#Docker-Network)
+ 
+- [Docker Compose](#Docker-Compose)  
 
 ## Container 
 
@@ -245,6 +247,52 @@ We will use `MongoClient` which node module , and using that `MongoClient` to co
 
 This is a protocol `let mongoUrlLocal = "mongodb://admin:password@localhost:27017"` (Never put password and username in the code . This is just for reference)
 
+
+## Docker Compose
+
+Docker Compose - Run multiple Docker containers
+
+Technologies used:
+
+- Docker, MongoDB, MongoExpress
+
+Project Description:
+
+- Write Docker Compose file to run MongoDB and MongoExpress containers
+
+With docker-compse file we can take the whole command and map it into a file so that we have a structure commands .
+
+- For example: If we have 10 docker containers that we want to run for our applications and they all need to talk to each other and interact with each other. I can basically write all the run commands for each container in a structured way in Docker Compose 
+
+```
+version: 3 # Version of Docker compose
+services: # This is where a Container list go 
+  mongodb:
+  mongo-express
+  nodejs-app
+```
+
+This is a structure of docker-compose 
+
+<img width="600" alt="Screenshot 2025-06-07 at 12 04 32" src="https://github.com/user-attachments/assets/76373f08-795a-431c-9a19-fd9a2cddb225" />
+
+Docker-compose is a strucutred way to container very normal common docker command . It easier for us to edit the file if we want to change some variable or add some new options 
+
+We don't have to create network in Docker-compose whe  have the same concept that we have containers will talk to each other using just the container name . What Docker compose will do is take care of creating a common network for these containers so we don't have to create the network and specify in which network these containers will run 
+
+`restart: always` : Is to make sure Mongo Express connect to MongoDB container when we start the project bcs when we start  both container at once wieth docker-compose, it could be that Mongo-Express container start first or before MongoDB is up and running and obiously won't be able to connect to it bcs there is no database container to connect to so it Mongo Express container will fail . With this configuration we are telling Docker compose to restart the Mongo Express container if it fail to conenct to the database  
+
+There are some other ways to define the order of containers to start in Docker Compose and define that one container starts before the other with configuration like `depends_on` or `heathcheck` 
+
+<img width="600" alt="Screenshot 2025-06-07 at 12 14 59" src="https://github.com/user-attachments/assets/73bd9ce2-4d83-45e7-9b4a-d59edebb9ec1" />
+
+To start docker compose `docker-compose -f <docker-compose file> up`
+
+- After I start docker compose It will automatically create a network for me
+
+- To check network `docker network ls`
+
+To stop docker compose `docker-compose -f <docker-compose file> down`
 
 ## Project 5: Create Docker Repository on Nexus and Push to It
 

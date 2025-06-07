@@ -383,6 +383,34 @@ To check inside the container `docker exec -it <container-id> /bin/bash`
 
 Some container don't have `bash` I can do `docker exec -it <container-id> /bin/sh` 
 
+**Never run as Root User**
+
+Now when we create this Image and run it as a Container Which OS user will be use to start the Application inside ?
+
+By default Dockerfile does not specify a user it uses a Root User . But in reality never should run Application as Root User
+
+The Solution is to create dedicate User with a dedicated Group in Docker Image to run Application 
+
+With `node:24-alpine` image `groupadd` and `useradd` do not exist in `Alpine` by default.
+
+- I need to install `shadow` package to get groupadd and useradd `RUN apk add --no-cache shadow`
+  
+To create user and group in Image : `RUN groupadd -r tim && useradd -g tim tim`.
+
+Then I set ownership and permission to that user : `RUN chown -R tim:tim /app`
+
+Then I switch to that User : `USER tim`
+
+Then I run the App : `CMD ["node", "server.js"]`
+
+To check it work can go inside the container `docker exec -it <container-id> /bin/sh` and use command `whoami` It will appear `tim`
+
+
+
+
+
+
+
 ## Project 5: Create Docker Repository on Nexus and Push to It
 
 ### Technologies Used

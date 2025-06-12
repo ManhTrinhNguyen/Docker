@@ -22,6 +22,12 @@
 
  - [Deploy](#Deploy)
 
+- [Docker Volume](#Docker-Volume)
+
+ - [3 type Docker Volume](#3-type-Docker-Volume)
+
+ - [Use volume in Docker Compose](#Use-volume-in-Docker-Compose)
+
 ## Container 
 
 #### What is container ? 
@@ -536,7 +542,97 @@ Now I `ssh` to the remote server and copy that docker compose file and run in th
 
 - After that I can start docker compose : `docker-compose -t <docker-compose.yaml> up`
 
+## Docker Volume
 
+Volume is use for Data Persistence in Docker . For examle if I have DB or other Stateful Application I would have to use volume for that 
+
+Use case is so container run on the host, let's say we have a database container and the container has a virtual file system where the data is usally stored but here there is no persistence. If I were to remove the container then the data in this virutal file system is gone and its start from fresh state 
+
+What is Docker Volume ?
+
+So on the host we have physical file system . And the way volumes work is that we plug the physical file system path, it could be folder or directory, and we plug it into the container's file system path  
+
+So What happen is that when the container writes to its file system it gets replicated or automatically written on the host file system directory and vice versa
+
+
+#### 3 type Docker Volume 
+
+Using Docker run command `docker run -v /home/mount/data:/var/lib/mysql/data`. This type called Host Volume. 
+
+`Host Volume` I decide where in the host file system that reference is made 
+
+`/home/mount/data` is host directory
+
+`/var/lib/mysql/data`: is a container directory
+
+Second type is where I create a volume just by referencing the container directory `docker run -v /var/lib/mysql/data` . I don't  specify which directory on the host should be mounted, but that taken care of docker itself . 
+
+- So this host directory automatically create by Docker under `/var/lib/docker/volumes/random-hash/_data`. This is called `Anonymouse Volumes`
+
+The third type is specifies the name of  the folader on the host file system `docker run -v name:/var/lib/mysql/data` 
+
+- The name is up to me . This is called name Volume (Should be use is name volume in Production) 
+
+#### Use volume in Docker Compose 
+
+```
+version: '3'
+services:
+  mongodb: # container name 
+    image: mongo # Image of the container 
+    ports:
+     - 27017:27017
+    environment:
+     - MONGO_INITDB_ROOT_USERNAME=admin
+     - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+     - mongo-data:/data/db
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+     - 8081:8081
+    environment:
+     - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+     - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+     - ME_CONFIG_MONGODB_SERVER=mongodb
+     - ME_CONFIG_BASICAUTH_USERNAME=user
+     - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    depends_on:
+     - "mongodb"
+  nodejs-app:
+    image: nodejs 
+    depends_on:
+      - "mongodb"
+    ports:
+     - 3000:3000
+    environment:
+      - MONGO_DB_USERNAME=admin
+      - MONGO_DB_PWD=password
+volumes:
+  mongo-data:
+    driver: local
+```
+
+We have `volumes` attributes and I can put `name volume` just like -v option `mongo-data:/data/db`
+
+And at the same level of `services` I would actually list all the volumes that I have defined .
+
+I define a list of volume that I want to mount into the containers 
+
+If I were to create volumes for different containers, I would list them all there 
+
+```
+volumes:
+  mongo-data:
+    driver: local
+```
+
+On the container level then I acutally define under which path that specific volume can be mounted
+
+The benefit of that I can acutally mount a reference of the same folder on a host to more than 1 container and that would be the benefitcial if those containers need to share the data
+
+In this case I would mount the same volume, name or reference to 2 different containers, and I can mount them to different path inside of container 
 
 ## Docker Best Practice 
 
@@ -646,6 +742,22 @@ Now I `ssh` to the remote server and copy that docker compose file and run in th
   !!! Note : I have to login to Docker Hub in able to scan Images
 
   - In the background Docker will scan against its own Database of known vulnerabilities to run vulnerabilities scan on the Image . The Database of known vulnerabilities gets constantly updated, so new one get discover and edit all the time for different Images 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

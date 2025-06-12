@@ -16,6 +16,12 @@
 
 - [Build Dockerfile](#Build-Dockerfile)
 
+- [Deploy Docker Application on a Server](#Deploy-Docker-Application-on-a-Server)
+
+ - [Push Docker Image to Private Repo ECR](#Push-Docker-Image-to-Private-Repo-ECR)
+
+ - [Deploy](#Deploy)
+
 ## Container 
 
 #### What is container ? 
@@ -406,51 +412,129 @@ Then I run the App : `CMD ["node", "server.js"]`
 To check it work can go inside the container `docker exec -it <container-id> /bin/sh` and use command `whoami` It will appear `tim`
 
 
+## Deploy Docker Application on a Server
 
+Demo Project:
 
+- Deploy Docker application on a server with Docker Compose
 
+Technologies used:
 
+- Docker, Amazon ECR, Node.js, MongoDB, MongoExpress
 
-## Project 5: Create Docker Repository on Nexus and Push to It
+Project Description:
 
-### Technologies Used
-- **Docker**
-- **Nexus**
-- **DigitalOcean**
-- **Linux**
+- Copy Docker-compose file to remote server
 
-### Project Description
-- Created a Docker-hosted repository on **Nexus**.
-- Configured **Nexus**, a DigitalOcean Droplet, and Docker to push images to the Nexus repository.
-- Built and pushed a Docker image to the Docker repository hosted on Nexus.
+- Login to private Docker registry on remote server to fetch our app image
 
----
+- Start our application container with MongoDB and MongoExpress services using docker compose
 
-## Project 6: Persist Data with Docker Volumes
+#### Push Docker Image to Private Repo ECR 
 
-### Technologies Used
-- **Docker**
-- **Node.js**
-- **MongoDB**
+I just create my Nodejs Docker Image from my Local machine 
 
-### Project Description
-- Configured a **Docker Volume** to persist data for a MongoDB container.
-- Ensured data durability and availability across container restarts.
+Now I want to push that Image into ECR 
 
----
+Before I can do that I need to have `aws cli` in my local machine : 
 
-## Project 7: Deploy Nexus as Docker Container
+- Installing AWS CLI on MacOS: (https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-macOS.html)
 
-### Technologies Used
-- **Docker**
-- **Nexus**
-- **DigitalOcean**
-- **Linux**
+Then I will configure Credentials for the AWS CLI (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
 
-### Project Description
-- Created and configured a Droplet on **DigitalOcean**.
-- Set up and deployed **Nexus** as a Docker container for repository management.
+Now I will go to my AWS Console ECR to create my Private Repo 
 
+Now I have my Repository name `nodejs`
+
+One thing specific to ECR is that here I create a Docker Repo per image . So I don't have the repository where I can actually push multiple images of differents applications but rather for each Image I have its own repository 
+
+What I store in the repository are the different tags or different versions of the same image 
+
+There is 2 things I need to do in order to push Image to ECR :
+
+- Login into ECR (I have to authenticate myself) . If Docker Image built and push from Jenkins Server I have to give Jenkins Credentials to login into Repository `aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 660753258283.dkr.ecr.us-west-1.amazonaws.com` .
+
+- I need to tag my Image
+
+Image Name concepts in Docker Repo 
+
+- `registryDomain/imageName:tag` : THis is a naming in Docker Registries
+
+- `registryDomain` is the registry Domain (host, port etc...)
+
+-  `imageName:tag` This is actual image name and the tag
+
+-  But with Dockerhub we able to pull an image without having to specify a registry domain . This command `docker pull mongo:4.2` is a shorthand of this command `docker pull docker.io/library/mongo:4.2`
+
+-  In the Private Repo Registry we can't skip this part bcs there is no default configuration for it
+
+So In ECR I will do this : `660753258283.dkr.ecr.us-west-1.amazonaws.com/nodejs:1.0`
+
+We have to tag our image like that to tell Docker that I want to push my Image to this Registry Domain which is ECR 
+
+Tag meaning rename our image to include the repository domain : `docker tag myapp:1.0 660753258283.dkr.ecr.us-west-1.amazonaws.com/nodejs:1.0`
+
+Now I can push the image like this : `docker push 660753258283.dkr.ecr.us-west-1.amazonaws.com/nodejs:1.0`
+
+#### Deploy
+
+In the Project above I have created my own Docker Image 
+
+In order to start an application on development server, I would need all the containers that make up that application environment 
+
+This is what my docker-compose look like 
+
+```
+version: '3'
+services:
+  mongodb: # container name 
+    image: mongo # Image of the container 
+    ports:
+     - 27017:27017
+    environment:
+     - MONGO_INITDB_ROOT_USERNAME=admin
+     - MONGO_INITDB_ROOT_PASSWORD=password
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+     - 8081:8081
+    environment:
+     - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+     - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+     - ME_CONFIG_MONGODB_SERVER=mongodb
+     - ME_CONFIG_BASICAUTH_USERNAME=user
+     - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    depends_on:
+     - "mongodb"
+  nodejs-app:
+    image: 660753258283.dkr.ecr.us-west-1.amazonaws.com/nodejs:1.0 
+    depends_on:
+      - "mongodb"
+    ports:
+     - 3000:3000 
+    environment:
+      - MONGO_DB_USERNAME=admin
+      - MONGO_DB_PWD=password
+```
+
+I have my own Image that I created before (Nodejs) that run on port 3000 
+
+- I am pulling my nodejs Image from ECR so my image name should look like this `image: 660753258283.dkr.ecr.us-west-1.amazonaws.com/nodejs:1.0`
+
+- In order to pull this Image, the environment where I execute this Docker Compose file have to be logged into a Docker Repository
+
+I have configured mongdb and mongo express . I configured on the project above  
+
+Docker Network and how Docker Compose take care of it is that when I connect 1 application in a Docker container with another in another Docker container, I don't have to use `localhost` . So the host name and the port number are implicitly configured in the `container name`
+
+Now I `ssh` to the remote server and copy that docker compose file and run in there 
+
+- I need to log in to ECR `aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 660753258283.dkr.ecr.us-west-1.amazonaws.com` . Also my AWS Credentials have to available in that Remote Server
+
+- I need to install docker and docker compose on that server .
+
+- After that I can start docker compose : `docker-compose -t <docker-compose.yaml> up`
 
 
 

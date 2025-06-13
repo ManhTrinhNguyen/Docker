@@ -18,23 +18,23 @@
 
 - [Deploy Docker Application on a Server](#Deploy-Docker-Application-on-a-Server)
 
- - [Push Docker Image to Private Repo ECR](#Push-Docker-Image-to-Private-Repo-ECR)
+  - [Push Docker Image to Private Repo ECR](#Push-Docker-Image-to-Private-Repo-ECR)
 
- - [Deploy](#Deploy)
+  - [Deploy](#Deploy)
 
 - [Docker Volume](#Docker-Volume)
 
- - [3 type Docker Volume](#3-type-Docker-Volume)
+  - [3 type Docker Volume](#3-type-Docker-Volume)
 
- - [Use volume in Docker Compose](#Use-volume-in-Docker-Compose)
+  - [Use volume in Docker Compose](#Use-volume-in-Docker-Compose)
 
 - [Docker volume Demo](#Docker-volume-Demo)
 
- - [Prerequisites](#Prerequisites)
-
- - [Defined Named Volume in Docker Compose File](#Defined-Named-Volume-in-Docker-Compose-File)
-
- - [Docker Volume locations](#Docker-Volume-locations)
+  - [Prerequisites](#Prerequisites)
+ 
+  - [Defined Named Volume in Docker Compose File](#Defined-Named-Volume-in-Docker-Compose-File)
+ 
+  - [Docker Volume locations](#Docker-Volume-locations)
 
 ## Container 
 

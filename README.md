@@ -28,6 +28,14 @@
 
  - [Use volume in Docker Compose](#Use-volume-in-Docker-Compose)
 
+- [Docker volume Demo](#Docker-volume-Demo)
+
+ - [Prerequisites](#Prerequisites)
+
+ - [Defined Named Volume in Docker Compose File](#Defined-Named-Volume-in-Docker-Compose-File)
+
+ - [Docker Volume locations](#Docker-Volume-locations)
+
 ## Container 
 
 #### What is container ? 
@@ -633,6 +641,132 @@ On the container level then I acutally define under which path that specific vol
 The benefit of that I can acutally mount a reference of the same folder on a host to more than 1 container and that would be the benefitcial if those containers need to share the data
 
 In this case I would mount the same volume, name or reference to 2 different containers, and I can mount them to different path inside of container 
+
+## Docker volume Demo
+
+Demo Project:
+
+- Persist data with Docker Volumes
+  
+Technologies used:
+  
+- Docker, Node.js, MongoDB
+
+Project Description:
+
+- Persist data of a MongoDB container by attaching a Docker volume to it
+
+#### Prerequisites
+
+I will first deploy the applications (Nodejs, MongoDB, MongExpress) by using docker-compose that I created above . 
+ 
+Then I go to MongoExpress UI `localhost:8081` I create a `databaseName: user-account` and then I will create a `users` collections 
+
+In order connect to the DB. I configure this in my `server.js`
+
+```
+let databaseName = "user-account"; # This will match the DB name I just created 
+let collectionName = "users"; # This will match the collectionName I just created
+```
+
+Now If were to recreate the MongoDB containerm I would lose all the data 
+
+#### Defined Named Volume in Docker Compose File 
+
+I want to persist all the data even if Docker Container Recreate
+
+First I will define what volmes I will be using in any of my containers . I will configure that in `services` level
+
+```
+volumes: # List of all the volumes I am using in any of my containers
+ mongo-data:
+  driver: local
+```
+
+- `mongo-data`: This is a name of the volume reference
+
+- `driver: local` : THe acutal storage path, that we will see later once it's created is acutally created by Docker itself . And this is a additional information for Docker to create that physical storage on a local file system . For example `/var/lib/docker/volumes/mongo-data/_data`
+
+
+Now I have a named Reference Volume define I can use it in the container . In the `mongdb` container at the `image` level I will define `volume`
+
+```
+volumes:
+ - mongo-data:/data/db
+```
+
+- `mongo-data`: Is the named volume that I defined (This is a volume I have on the host)
+
+- `/data/db`: This is the path inside the MongoDB container. It has to be the path where MongoDB explicitly persists its data
+
+Now all the data inside the container in this path `/data/db` will be replicated on the container startup on my host, on this persitence volume `mongo-data` I defined and vice versa .
+
+This is my complete docker-compose file: 
+
+```
+services:
+  mongodb: # container name 
+    image: mongo # Image of the container 
+    ports:
+     - 27017:27017
+    environment:
+     - MONGO_INITDB_ROOT_USERNAME=admin
+     - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+     - mongo-data:/data/db
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+     - 8081:8081
+    environment:
+     - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+     - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+     - ME_CONFIG_MONGODB_SERVER=mongodb
+     - ME_CONFIG_BASICAUTH_USERNAME=user
+     - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    depends_on:
+     - "mongodb"
+  nodejs-app:
+    image: nodejs 
+    depends_on:
+      - "mongodb"
+    ports:
+     - 3000:3000
+    environment:
+      - MONGO_DB_USERNAME=admin
+      - MONGO_DB_PWD=password
+volumes:
+  mongo-data:
+    driver: local
+```
+
+Now If I were to recreate all these containers, these data should be persisted 
+
+#### Docker Volume locations
+
+On Linux : `/var/lib/docker/volumes`
+
+On Mac : `/var/lib/docker/volumes`
+
+On Window: `C:\ProgramData\docker\volumes`
+
+Inside of this volumes directory I have a list of all the volumes that one or many containers are using and each volumes has its own hash, which has to be unique
+
+With Docker for Macs we need to execute this command `docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh` which will allow us to enter the shell of the Docker VM that container is using. So we can view the Docker data about the containers and its volumes
+
+- This is different from running `docker exec -it <container_id>` .
+
+- This will start up a new container and allow us to connect to it from here
+
+- After execute this command I will get into a terminal of Docker container . Then I can see a list of volumes by using this command `ls /var/lib/docker/volumes`
+
+Now If I go inside of the Mongo DB container `docker exec -t <container-id> sh` and execute this command `ls /var/lib/docker/volumes` I would see the same list of volume
+
+
+
+
+
 
 ## Docker Best Practice 
 

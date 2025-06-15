@@ -38,13 +38,17 @@
  
 - [Create Docker Reposiotry on Nexus and push to it](#Create-Docker-Reposiotry-on-Nexus-and-push-to-it)
 
- - [Create User Role for Docker Repo](#Create-User-Role-for-Docker-Repo)
+  - [Create User Role for Docker Repo](#Create-User-Role-for-Docker-Repo)
+ 
+  - [Docker Login to Nexus Docker Repo](#Docker-Login-to-Nexus-Docker-Repo)
+ 
+  - [Push Image to Nexus Repo](#Push-Image-to-Nexus-Repo)
+ 
+  - [Pull Docker Image from Nexus](#Pull-Docker-Image-from-Nexus)
+ 
+ - [Deploy Nexus as Docker container](#Deploy-Nexus-as-Docker-container)
 
- - [Docker Login to Nexus Docker Repo](#Docker-Login-to-Nexus-Docker-Repo)
-
- - [Push Image to Nexus Repo](#Push-Image-to-Nexus-Repo)
-
- - [Pull Docker Image from Nexus](#Pull-Docker-Image-from-Nexus)
+ - [Docker Best Practice](#Docker-Best-Practice)
 
 ## Container 
 
@@ -892,6 +896,68 @@ Once I execute it I should have a `items`
 <img width="600" alt="Screenshot 2025-06-15 at 14 17 13" src="https://github.com/user-attachments/assets/45cea9fe-fc87-47e9-b377-fbbbe4a51a60" />
 
 This way I can retrive the Docker Images from endpoint with some information 
+
+## Deploy Nexus as Docker container
+
+Demo Project:
+
+- Deploy Nexus as Docker container
+
+Technologies used:
+
+- Docker, Nexus, DigitalOcean, Linux
+  
+Project Description:
+
+- Create and Configure Droplet
+
+- Set up and run Nexus as a Docker container
+
+----
+
+I will create another Server to run Nexus as a Docker Container 
+
+I need to configure Firewall so correct Port are open for Docker and Nexus . 
+
+<img width="600" alt="Screenshot 2025-06-15 at 14 25 27" src="https://github.com/user-attachments/assets/60714a41-ea11-4841-bed3-3a9beec8300e" />
+
+SSH to Server `ssh root@ipaddress`
+
+In this Server I only need Docker to be installed 
+
+- `apt update` to update a server package manager
+
+- `snapp install docker`
+
+This is a Nexus Image (https://hub.docker.com/r/sonatype/nexus)
+
+Create a volume to persist data: `docker volume create --name nexus-data`
+
+Run Nexus container : `docker run -d -p 8081:8081 --name nexus -v nexus-data:/nexus-data sonatype/nexus3`
+
+- `-d` : Detached mode
+
+- `-p 8081:8081`: make accessible at port 8081
+
+- `-v nexus-data:/nexus-data`: This is a name volume
+
+- `sonatype/nexus3`: This is Image Name
+
+ To see whether the port is open : `netstat -lnpt`
+
+ Now I can see the port 8081 opened
+
+ <img width="600" alt="Screenshot 2025-06-15 at 14 34 30" src="https://github.com/user-attachments/assets/7a87a0d5-9911-4bc5-be2f-44757c6c8f98" /> 
+
+I can go to Nexus UI `<droplet-ip>:8081`
+
+To see acutal location of where this data is store on my server file system `docker volume ls` 
+
+Then I can see a list of volume name then I can do `docker inspect <volume-name>` It will give me some more information about the volume . Including the actual physical path where that volume is located 
+
+<img width="600" alt="Screenshot 2025-06-15 at 14 38 59" src="https://github.com/user-attachments/assets/a02ab5ab-28fd-4b5b-99ed-b637f3cb8eef" />
+
+<img width="600" alt="Screenshot 2025-06-15 at 14 40 22" src="https://github.com/user-attachments/assets/4774275c-0750-45c4-8670-79f87338b88f" />
 
 ## Docker Best Practice 
 

@@ -35,6 +35,16 @@
   - [Defined Named Volume in Docker Compose File](#Defined-Named-Volume-in-Docker-Compose-File)
  
   - [Docker Volume locations](#Docker-Volume-locations)
+ 
+- [Create Docker Reposiotry on Nexus and push to it](#Create-Docker-Reposiotry-on-Nexus-and-push-to-it)
+
+ - [Create User Role for Docker Repo](#Create-User-Role-for-Docker-Repo)
+
+ - [Docker Login to Nexus Docker Repo](#Docker-Login-to-Nexus-Docker-Repo)
+
+ - [Push Image to Nexus Repo](#Push-Image-to-Nexus-Repo)
+
+ - [Pull Docker Image from Nexus](#Pull-Docker-Image-from-Nexus)
 
 ## Container 
 
@@ -763,10 +773,125 @@ With Docker for Macs we need to execute this command `docker run -it --privilege
 
 Now If I go inside of the Mongo DB container `docker exec -t <container-id> sh` and execute this command `ls /var/lib/docker/volumes` I would see the same list of volume
 
+## Create Docker Reposiotry on Nexus and push to it 
 
+Demo Project:
 
+- Create Docker repository on Nexus and push to it
+  
+Technologies used:
 
+- Docker, Nexus, DigitalOcean, Linux
 
+Project Description:
+
+- Create Docker hosted repository on Nexus
+  
+- Create Docker repository role on Nexus
+  
+- Configure Nexus, DigitalOcean Droplet and Docker to be able to push to Docker repository
+
+- Build and Push Docker image to Docker repository on Nexus
+
+----
+
+In Nexus Go to Repositories -> Create Repository -> Choose Docker(hosted)
+
+- Select Blob store
+
+- And Create that
+
+Now If I go inside I should have a Reposiotry URL of the repository which can use to push Docker Image 
+
+<img width="600" alt="Screenshot 2025-06-15 at 13 39 44" src="https://github.com/user-attachments/assets/9b757fc8-91dc-470d-a311-d5e162924469" />
+
+#### Create User Role for Docker Repo
+
+First I need login to Nexus using a Nexus user  which has access to Docker hosted repository 
+
+I need to create a new Roles that has a privikege or access to Docker Hosted repository 
+
+`Privileges Selection` : Choose `nx-repository-view-docker-docker-hosted-*`
+
+<img width="600" alt="Screenshot 2025-06-15 at 13 43 50" src="https://github.com/user-attachments/assets/80a9f2cf-86c8-4c9c-b7ec-71118bf35b54" />
+
+And the I can assgin a Roles to my User . Go to Users choose my-user then assign the role to that user 
+
+#### Docker Login to Nexus Docker Repo 
+
+First I need to go to Docker-hosted Repo and edit `HTTP` field 
+
+- Reason is Docker Client cannot connect to a path which represent a Docker Repo, So we can not use this as an endpoint for Docker Login . This endpoint is `ipaddress:port` however this port itself is where Nexus is running .
+
+- So we need a Port for Docker repo speicifically, so its own individual port where Docker Repository will be accessible at
+
+- `Reposiotry Connectors` is only available in Docker type
+
+- I can set a Port `HTTP:8083`
+
+Now this Docker Repo is accessible at `ipaddress:8083`
+
+Now I go to a Droplet Server Terminal where Nexus is running and do `netstat -lntp` I can see a port 8083 opened 
+
+<img width="600" alt="Screenshot 2025-06-15 at 13 51 48" src="https://github.com/user-attachments/assets/81a722f6-72d4-4f7e-8a8d-3905a29d9fa7" />
+
+Now I need to open this Port on a Droplet Firewall 
+ 
+<img width="803" alt="Screenshot 2025-06-15 at 13 53 11" src="https://github.com/user-attachments/assets/8930ba47-579e-468d-8612-0a52c89212d8" />
+
+Final thing I need to configure is `Realms`
+
+- When we do a login we have a token of authentication from Nexus Docker reposiotry for a client and that token will be stored the on my local machine in a file called `cat ~/.docker/config.json`. And this json file will include all the authentication that I have made to all the different Docker repository . If you haven't logged in to a Docker Repository from my laptop you won't have this file
+
+- So we need to configure in Neuxus issuing of that Token `Docker Bearer Token Realm` . we will activated
+
+One more configure I have to do in Docker itself . Docker by default only allow client requests whenever we execute a command like Docker login , docker pull, docker push, all these commands to go to and talk to an `HTTPS` endpoint, a secure endpoint
+
+- Bcs we have `HTTP` not secure, we need to configure docker client to allow our Docker hosted reposiotry as an insecure registry
+
+- In linux System I can edit a file call `/etc/docker/daemon.json`
+
+```
+"insecure-registries": ["myregistrydomain.com:8083"]
+```
+
+- If I use Mac or Window I don't have that file locally bcs Docker Desktop acutally starts as a virtual machine on my Mac or Windows.
+
+ - Go to Docker Desktop UI -> Settings -> Docker Engine and then add that code
+
+<img width="600" alt="Screenshot 2025-06-15 at 14 03 44" src="https://github.com/user-attachments/assets/c0646f9d-c2dc-40e9-a38c-2351215c44f1" />
+
+ Now I can do `docker login [nexus ip address]:8083`
+
+ - Put my username and password in there
+
+Now the `~/.docker/config.json` got updated . Now this file have a token that Docker Repository issued back to our Client so that we don't have to Login in every time we execute command to a Repo 
+
+#### Push Image to Nexus Repo 
+
+First we will build an image `docker build -t nodejs-app:1.0 .`
+
+I need to Re tag the image to include the address or the name of the Repository : `docker tag nodejs-app:1.0 [nexus-ip-address:8083]/nodejs-app:1.0` 
+
+- This implicitly tell Docker where to push this image to 
+
+To check images : `docker images`
+
+To push Image : `docker push [nexus-ip-address:8083]/nodejs-app:1.0`
+
+Now I can see my Image in the Nexus Docker-hosted Repository 
+
+<img width="600" alt="Screenshot 2025-06-15 at 14 12 12" src="https://github.com/user-attachments/assets/11a61254-33ef-4761-9e79-0ab786265453" />
+
+#### Pull Docker Image from Nexus
+
+I can use Nexus API to pull Docker Image `curl -u tim:password -X GET '164.92.135.47:8081/service/rest/v1/components?repository=docker-hosted'`
+
+Once I execute it I should have a `items`
+
+<img width="600" alt="Screenshot 2025-06-15 at 14 17 13" src="https://github.com/user-attachments/assets/45cea9fe-fc87-47e9-b377-fbbbe4a51a60" />
+
+This way I can retrive the Docker Images from endpoint with some information 
 
 ## Docker Best Practice 
 
